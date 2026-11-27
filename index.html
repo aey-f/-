@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aey - เว็บไซต์รีวิวสุดน่ารัก</title>
+    <!-- โหลด Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- โหลด Google Fonts: Mali และ Prompt เพื่อความน่ารักและอ่านง่าย -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- โหลด Font Awesome สำหรับไอคอน -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cute': ['Mali', 'cursive'],
+                        'body': ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        'cream': '#FFFDF9',
+                        'pastel-pink': '#FFE5EC',
+                        'sweet-pink': '#FF8FAB',
+                        'deep-pink': '#FB6F92',
+                        'soft-peach': '#FFF0F3',
+                        'cocoa': '#4A3B32',
+                        'soft-brown': '#7D6B5D',
+                        'butter-yellow': '#FFD166',
+                    },
+                    boxShadow: {
+                        'cute': '0 8px 20px -4px rgba(251, 111, 146, 0.15)',
+                        'cute-hover': '0 12px 24px -4px rgba(251, 111, 146, 0.25)',
+                        'bubble': '4px 4px 0px rgba(255, 143, 171, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ปรับดีไซน์กล่องคำพูด (Speech Bubble) ให้ตัวกล่องโค้งมนและมีหางแหลมชี้เฉียงน่ารัก */
+        .bubble-left {
+            position: relative;
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF9FB 100%);
+            border: 3px solid #FF8FAB;
+            border-radius: 38px 38px 38px 14px;
+        }
+        .bubble-left::before {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            left: 20px;
+            border-width: 16px 16px 0 0;
+            border-style: solid;
+            border-color: #FF8FAB transparent transparent transparent;
+        }
+        .bubble-left::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 23px;
+            border-width: 11px 11px 0 0;
+            border-style: solid;
+            border-color: #FFF9FB transparent transparent transparent;
+        }
+
+        .bubble-right {
+            position: relative;
+            background: linear-gradient(135deg, #FFF5F8 0%, #FFE8EF 100%);
+            border: 3px solid #FB6F92;
+            border-radius: 38px 38px 14px 38px;
+        }
+        .bubble-right::before {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            right: 20px;
+            border-width: 16px 0 0 16px;
+            border-style: solid;
+            border-color: #FB6F92 transparent transparent transparent;
+        }
+        .bubble-right::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            right: 23px;
+            border-width: 11px 0 0 11px;
+            border-style: solid;
+            border-color: #FFE8EF transparent transparent transparent;
+        }
+
+        /* แอนิเมชันลอยตัวเบาๆ */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-float {
+            animation: float 3.5s ease-in-out infinite;
+        }
+
+        /* 1. หัวใจมุมโลโก้ลอยช้า ๆ แบบเป็นธรรมชาติ */
+        @keyframes heartFloatSlow {
+            0%, 100% { transform: translateY(0px) rotate(-4deg) scale(1); }
+            50% { transform: translateY(-4px) rotate(5deg) scale(1.04); }
+        }
+        .animate-heart-slow {
+            animation: heartFloatSlow 4.2s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        /* 2. ปุ่มส่งรีวิวตอบสนองนุ่มนวลเมื่อชี้หรือกด (ทั้งเมาส์และนิ้วแตะ) */
+        .btn-review-press {
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+            will-change: transform;
+        }
+        .btn-review-press:hover {
+            transform: translateY(-2px);
+        }
+        .btn-review-press:active {
+            transform: scale(0.95) translateY(1px);
+        }
+
+        /* 3. ป๊อปอัพแจ้งเตือนสำเร็จ (Toast) แบบ Fade + Slide นุ่มๆ */
+        .toast-smooth {
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+            will-change: transform, opacity;
+        }
+
+        /* =========================================================
+           4. หน้าโหลดต้อนรับ (Splash Screen) & ลูกเล่นดาวระยิบระยับ
+           ========================================================= */
+        #splash-screen {
+            background: radial-gradient(circle at top left, #FFFDF9 0%, #FFE5EC 55%, #FFF0F3 100%);
+            transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.55s ease;
+            will-change: opacity;
+        }
+        #splash-screen.splash-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        @keyframes twinkleStar {
+            0%, 100% { transform: scale(0.75) rotate(0deg); opacity: 0.35; }
+            50% { transform: scale(1.2) rotate(18deg); opacity: 1; }
+        }
+        .animate-twinkle {
+            animation: twinkleStar 2.6s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+        .twinkle-delay-1 { animation-delay: 0.4s; }
+        .twinkle-delay-2 { animation-delay: 0.9s; }
+        .twinkle-delay-3 { animation-delay: 1.4s; }
+        .twinkle-delay-4 { animation-delay: 1.9s; }
+
+        /* รองรับผู้ใช้ที่ตั้งค่าลดการเคลื่อนไหวบนมือถือหรือคอม (prefers-reduced-motion) */
+        @media (prefers-reduced-motion: reduce) {
+            .animate-float,
+            .animate-heart-slow,
+            .animate-twinkle {
+                animation: none !important;
+            }
+            .btn-review-press,
+            .toast-smooth,
+            #splash-screen,
+            #splash-progress-bar {
+                transition: none !important;
+                transform: none !important;
+            }
+        }
+
+        /* ตกแต่ง Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF0F3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFB3C6;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FB6F92;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-sweet-pink selection:text-white overflow-hidden" id="app-body">
+
+    <!-- =========================================================
+         หน้าโหลดต้อนรับ (Splash Screen) - แสดงทุกครั้งที่เปิดหน้าเว็บใหม่
+         ========================================================= -->
+    <div id="splash-screen" role="status" aria-live="polite" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 select-none">
+        
+        <!-- ลูกเล่นดาวระยิบระยับตกแต่งพื้นหลัง (ไม่บังการกดปุ่ม) -->
+        <div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
+            <i class="fa-solid fa-star text-butter-yellow text-lg sm:text-xl absolute top-[16%] left-[18%] animate-twinkle"></i>
+            <i class="fa-solid fa-sparkles text-sweet-pink text-xl sm:text-2xl absolute top-[22%] right-[20%] animate-twinkle twinkle-delay-1"></i>
+            <i class="fa-solid fa-star text-butter-yellow text-sm sm:text-base absolute bottom-[24%] left-[22%] animate-twinkle twinkle-delay-2"></i>
+            <i class="fa-solid fa-heart text-deep-pink/50 text-base sm:text-lg absolute bottom-[20%] right-[18%] animate-twinkle twinkle-delay-3"></i>
+            <i class="fa-solid fa-sparkles text-butter-yellow text-base absolute top-[45%] left-[12%] animate-twinkle twinkle-delay-4"></i>
+        </div>
+
+        <!-- กล่องเนื้อหาต้อนรับตรงกลาง -->
+        <div class="relative z-10 w-full max-w-xs sm:max-w-sm flex flex-col items-center text-center">
+            
+            <!-- โลโก้โปร่งใส/วงกลมนุ่มนวล พร้อมวงแหวนพาสเทลและดาวมุมโลโก้ -->
+            <div class="relative mb-5 animate-float">
+                <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full p-1.5 bg-gradient-to-tr from-sweet-pink via-butter-yellow to-pastel-pink shadow-cute">
+                    <div class="w-full h-full rounded-full overflow-hidden bg-white/90 flex items-center justify-center">
+                        <img id="splash-logo"
+                             src="https://i.postimg.cc/wMLyB7zq/mi-m-ch-x-39-20261126184835.png"
+                             alt="โลโก้ยินดีตอนรับ"
+                             onerror="this.onerror=null; this.src='https://placehold.co/300x300/FFE5EC/FB6F92?text=Welcome';"
+                             class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <span aria-hidden="true" class="animate-twinkle absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white shadow-sm border border-pastel-pink flex items-center justify-center text-butter-yellow text-sm">
+                    <i class="fa-solid fa-star"></i>
+                </span>
+            </div>
+
+            <!-- ชื่อเว็บไซต์ต้อนรับ -->
+            <h2 class="font-cute text-2xl sm:text-3xl font-bold text-deep-pink tracking-wide mb-1.5">
+                ยินดีตอนรับ
+            </h2>
+
+            <!-- ข้อความสถานะที่เปลี่ยนตามขั้นตอนการเตรียมหน้าเว็บจริง -->
+            <p id="splash-status-text" class="font-cute text-sm sm:text-base text-cocoa font-medium min-h-[1.5rem] mb-4 transition-opacity duration-200">
+                ยินดีต้อนรับน้า ♡
+            </p>
+
+            <!-- แถบความคืบหน้า (Progress Bar) อ้างอิงความคืบหน้าจริง -->
+            <div id="splash-progress-wrapper" class="w-full bg-white/90 h-3.5 rounded-full p-0.5 border-2 border-pastel-pink shadow-inner overflow-hidden">
+                <div id="splash-progress-bar"
+                     role="progressbar"
+                     aria-valuemin="0"
+                     aria-valuemax="100"
+                     aria-valuenow="15"
+                     style="width: 15%;"
+                     class="h-full rounded-full bg-gradient-to-r from-sweet-pink via-deep-pink to-butter-yellow transition-all duration-300 ease-out">
+                </div>
+            </div>
+
+            <!-- แจ้งเตือนกรณีอินเทอร์เน็ตช้า (แสดงเมื่อโหลดเกิน 2.5 วินาที) -->
+            <p id="splash-slow-hint" class="hidden text-xs text-soft-brown mt-3 bg-white/80 px-3.5 py-1.5 rounded-full border border-pastel-pink">
+                <i class="fa-solid fa-wifi text-sweet-pink mr-1"></i>อินเทอร์เน็ตค่อนข้างช้า กำลังจัดเตรียมหน้าร้านให้อยู่นะคะ...
+            </p>
+
+            <!-- กล่องแจ้งข้อผิดพลาดพร้อมปุ่มลองใหม่ (แสดงเฉพาะเมื่อโหลดข้อมูลไม่สำเร็จ ไม่บังปุ่ม) -->
+            <div id="splash-error-box" class="hidden mt-4 bg-white/95 border-2 border-deep-pink rounded-2xl p-4 shadow-cute w-full">
+                <p id="splash-error-msg" class="text-xs sm:text-sm text-cocoa font-medium mb-3">
+                    ไม่สามารถเตรียมข้อมูลหน้าร้านได้ในขณะนี้ ลองใหม่อีกครั้งนะคะ
+                </p>
+                <button type="button" onclick="retryBootApp()"
+                        class="btn-review-press w-full py-2 px-4 rounded-full bg-gradient-to-r from-sweet-pink to-deep-pink text-white font-cute font-bold text-sm shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-rotate-right mr-1.5"></i>ลองใหม่อีกครั้ง
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- แถบแจ้งเตือนด้านบน (ระบุสถานะ Demo และปุ่มเปิดหลังบ้าน) -->
+    <div class="bg-pastel-pink/80 backdrop-blur-sm border-b border-sweet-pink/30 px-4 py-2 sticky top-0 z-40">
+        <div class="max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
+            <div class="flex items-center gap-2 text-cocoa font-medium">
+                <span class="bg-sweet-pink text-white px-2.5 py-0.5 rounded-full font-cute text-xs font-bold shadow-sm">DEMO</span>
+                <span>ระบบจำลองหน้าเว็บ (ข้อมูลบันทึกชั่วคราวในเบราว์เซอร์)</span>
+            </div>
+            <button onclick="openAdminModal()" class="bg-white hover:bg-sweet-pink text-deep-pink hover:text-white border border-sweet-pink px-3.5 py-1 rounded-full font-cute font-semibold transition-all duration-200 shadow-sm flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>จัดการหลังบ้าน</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- กล่องข้อความแจ้งเตือน (Toast Notification แทนการใช้ alert) -->
+    <div id="toast" class="toast-smooth fixed bottom-5 right-5 z-50 transform translate-y-6 scale-95 opacity-0 pointer-events-none">
+        <div class="bg-cocoa text-white px-5 py-3 rounded-2xl shadow-lg flex items-center gap-3 border-2 border-sweet-pink">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-butter-yellow text-lg"></i>
+            <span id="toast-message" class="font-medium text-sm">บันทึกข้อมูลเรียบร้อยแล้ว!</span>
+        </div>
+    </div>
+
+    <!-- คอนเทนเนอร์หลักของหน้าเว็บ (จัดวางตามแบบร่างเป๊ะ 100%) -->
+    <main class="w-full max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex-grow">
+        
+        <!-- =========================================================
+             ส่วนที่ 1: ส่วนหัว (Header)
+             ซ้าย: วงกลม Logo | ขวา: ชื่อร้าน, รายละเอียด, Facebook, IG
+             ========================================================= -->
+        <header class="bg-white/90 backdrop-blur-md rounded-[36px] p-6 sm:p-8 shadow-cute border-2 border-pastel-pink mb-8">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+                
+                <!-- วงกลม Logo (ด้านซ้ายบนตามแบบร่าง) -->
+                <div class="relative flex-shrink-0 animate-float">
+                    <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full p-1.5 bg-gradient-to-tr from-sweet-pink via-butter-yellow to-pastel-pink shadow-md">
+                        <div class="w-full h-full rounded-full overflow-hidden bg-soft-peach flex items-center justify-center relative">
+                            <img id="display-logo" 
+                                 src="https://i.postimg.cc/wMLyB7zq/mi-m-ch-x-39-20261126184835.png" 
+                                 alt="โลโก้ร้าน Aey" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/300x300/FFE5EC/FB6F92?text=Demo+Logo';"
+                                 class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <!-- สติกเกอร์หัวใจตกแต่งมุมโลโก้ -->
+                    <div class="animate-heart-slow absolute -bottom-1 -right-1 bg-white w-9 h-9 rounded-full flex items-center justify-center shadow-sm border border-pastel-pink text-deep-pink">
+                        <i class="fa-solid fa-heart text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- ข้อมูลร้าน (ด้านขวาบนตามแบบร่าง) -->
+                <div class="flex-1 text-center sm:text-left flex flex-col justify-center">
+                    <!-- ชื่อร้าน -->
+                    <div class="inline-flex items-center justify-center sm:justify-start gap-2 mb-2">
+                        <h1 id="display-shop-name" class="font-cute text-3xl sm:text-4xl font-bold text-deep-pink tracking-wide">
+                            Aey
+                        </h1>
+                        <span class="bg-butter-yellow/30 text-cocoa text-xs font-cute font-bold px-2.5 py-1 rounded-full border border-butter-yellow">
+                            <i class="fa-solid fa-sparkles text-amber-500 mr-1"></i>Verified
+                        </span>
+                    </div>
+
+                    <!-- รายละเอียดร้าน -->
+                    <p id="display-shop-desc" class="text-soft-brown text-sm sm:text-base leading-relaxed mb-4">
+                        ยินดีต้อนรับสู่พื้นที่รีวิวความน่ารักและประสบการณ์สุดประทับใจ ใครเคยแวะมาอุดหนุนหรือใช้บริการ อย่าลืมเขียนรีวิวเป็นกำลังใจให้กันน้า~ ✨🍓
+                    </p>
+
+                    <!-- ช่องทางการติดต่อ: Facebook และ IG -->
+                    <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-start gap-2.5 pt-1">
+                        <a id="link-facebook" href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-2 bg-[#EEF4FF] hover:bg-[#1877F2] text-[#1877F2] hover:text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-200 border border-[#D0E1FF]">
+                            <i class="fa-brands fa-facebook text-base"></i>
+                            <span>Facebook: <strong id="display-fb-name" class="font-semibold">Aey Official</strong></span>
+                        </a>
+
+                        <a id="link-ig" href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-2 bg-[#FFF0F6] hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 text-[#E1306C] hover:text-white px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border border-[#FFCCE0]">
+                            <i class="fa-brands fa-instagram text-base"></i>
+                            <span>IG: <strong id="display-ig-name" class="font-semibold">@aey.review</strong></span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- =========================================================
+             ส่วนที่ 2: แถบสถิติและปุ่มหลัก (Stats & CTA)
+             ซ้าย: คะแนนร้าน | ขวา: จำนวนรีวิว | ตรงกลางเยื้องล่าง: ปุ่มรีวิว
+             ========================================================= -->
+        <section class="mb-10">
+            <!-- แถวบน: คะแนนร้าน (ซ้าย) และ จำนวนรีวิว (ขวา) -->
+            <div class="grid grid-cols-2 gap-4 sm:gap-6 mb-5">
+                
+                <!-- คะแนนร้าน (ซ้าย) -->
+                <div class="bg-white rounded-3xl p-4 sm:p-5 border-2 border-pastel-pink shadow-cute flex flex-col items-center justify-center text-center">
+                    <span class="text-xs sm:text-sm text-soft-brown font-medium mb-1">คะแนนร้าน</span>
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-star text-butter-yellow text-xl sm:text-2xl drop-shadow-sm"></i>
+                        <span id="display-avg-rating" class="font-cute text-2xl sm:text-3xl font-bold text-cocoa">5.0</span>
+                        <span class="text-xs text-soft-brown self-end mb-1">/ 5</span>
+                    </div>
+                    <div id="display-stars-row" class="flex gap-1 text-butter-yellow text-xs mt-1">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- จำนวนรีวิว (ขวา) -->
+                <div class="bg-white rounded-3xl p-4 sm:p-5 border-2 border-pastel-pink shadow-cute flex flex-col items-center justify-center text-center">
+                    <span class="text-xs sm:text-sm text-soft-brown font-medium mb-1">จำนวนรีวิว</span>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-comment-dots text-sweet-pink text-xl sm:text-2xl"></i>
+                        <span id="display-review-count" class="font-cute text-2xl sm:text-3xl font-bold text-cocoa">6</span>
+                        <span class="text-xs sm:text-sm text-soft-brown self-end mb-1">รีวิว</span>
+                    </div>
+                    <span class="text-[11px] text-deep-pink bg-soft-peach px-2.5 py-0.5 rounded-full mt-1 font-medium">
+                        จากลูกค้าที่น่ารัก 💕
+                    </span>
+                </div>
+
+            </div>
+
+            <!-- ตรงกลางเยื้องลงมา: ปุ่มรีวิว (ตามตำแหน่งในภาพร่าง) -->
+            <div class="flex justify-center">
+                <button onclick="openReviewModal()" 
+                        class="btn-review-press group relative inline-flex items-center gap-2.5 bg-gradient-to-r from-sweet-pink to-deep-pink hover:from-deep-pink hover:to-sweet-pink text-white font-cute text-lg sm:text-xl font-bold px-8 py-3.5 rounded-full shadow-cute hover:shadow-cute-hover cursor-pointer">
+                    <i class="fa-solid fa-pen-nib group-hover:rotate-12 transition-transform"></i>
+                    <span>เขียนรีวิวเลย!</span>
+                    <span class="bg-white/25 text-white text-xs px-2 py-0.5 rounded-full">+1</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             ส่วนที่ 3: รายการรีวิวแบบกล่องคำพูดสลับซ้าย-ขวา (Speech Bubbles)
+             รักษาเอกลักษณ์การวางสลับฝั่งซ้ายและขวาเหมือนในแบบร่างทุกประการ
+             ========================================================= -->
+        <section aria-label="รายการรีวิวจากลูกค้า">
+            <div id="reviews-container" class="flex flex-col gap-6 sm:gap-7">
+                <!-- กล่องข้อความรีวิวจะถูกสร้างด้วย JavaScript ที่นี่ -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ส่วนท้ายเว็บเรียบง่าย -->
+    <footer class="text-center py-6 px-4 text-xs text-soft-brown/80 border-t border-pastel-pink/60 bg-white/50">
+        <p class="font-cute">© 2026 <span id="footer-shop-name" class="font-bold text-deep-pink">Aey</span> • เว็บไซต์รีวิวสไตล์น่ารัก (Demo Version)</p>
+    </footer>
+
+    <!-- =========================================================
+         MODAL 1: หน้าต่างสำหรับลูกค้าเขียนส่งรีวิว (Frontend Function)
+         ========================================================= -->
+    <div id="review-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-cocoa/40 backdrop-blur-sm transition-opacity">
+        <div class="bg-white w-full max-w-md rounded-[32px] border-4 border-pastel-pink p-6 sm:p-7 shadow-2xl transform transition-all relative">
+            <!-- ปุ่มปิด -->
+            <button onclick="closeReviewModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-soft-peach hover:bg-sweet-pink text-deep-pink hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 bg-soft-peach text-deep-pink rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl shadow-sm">
+                    <i class="fa-solid fa-heart-circle-plus"></i>
+                </div>
+                <h2 class="font-cute text-2xl font-bold text-cocoa">ส่งรีวิวให้ร้าน <span class="modal-shop-title text-deep-pink">Aey</span></h2>
+                <p class="text-xs text-soft-brown mt-1">ความเห็นของคุณมีค่ามากๆ เลยนะ ขอบคุณล่วงหน้าค่า 🌸</p>
+            </div>
+
+            <form id="review-form" onsubmit="handleReviewSubmit(event)" class="space-y-4">
+                <!-- เลือกดาว -->
+                <div>
+                    <label class="block text-sm font-semibold text-cocoa mb-1.5 text-center">ให้คะแนนความประทับใจ</label>
+                    <div id="star-selector" class="flex justify-center gap-2 text-2xl text-gray-300 cursor-pointer">
+                        <i class="fa-solid fa-star transition-transform hover:scale-110 text-butter-yellow" data-value="1"></i>
+                        <i class="fa-solid fa-star transition-transform hover:scale-110 text-butter-yellow" data-value="2"></i>
+                        <i class="fa-solid fa-star transition-transform hover:scale-110 text-butter-yellow" data-value="3"></i>
+                        <i class="fa-solid fa-star transition-transform hover:scale-110 text-butter-yellow" data-value="4"></i>
+                        <i class="fa-solid fa-star transition-transform hover:scale-110 text-butter-yellow" data-value="5"></i>
+                    </div>
+                    <input type="hidden" id="review-rating" value="5">
+                </div>
+
+                <!-- ชื่อผู้รีวิว -->
+                <div>
+                    <label for="reviewer-name" class="block text-sm font-medium text-cocoa mb-1">ชื่อของคุณ <span class="text-deep-pink">*</span></label>
+                    <input type="text" id="reviewer-name" required placeholder="เช่น น้องมิ้นท์, คุณบอส..." 
+                           class="w-full px-4 py-2.5 rounded-2xl bg-cream border-2 border-pastel-pink focus:border-sweet-pink focus:outline-none text-sm">
+                </div>
+
+                <!-- ข้อความรีวิว -->
+                <div>
+                    <label for="review-text" class="block text-sm font-medium text-cocoa mb-1">ข้อความรีวิว <span class="text-deep-pink">*</span></label>
+                    <textarea id="review-text" rows="3" required placeholder="เล่าความประทับใจได้เลย..." 
+                              class="w-full px-4 py-2.5 rounded-2xl bg-cream border-2 border-pastel-pink focus:border-sweet-pink focus:outline-none text-sm resize-none"></textarea>
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeReviewModal()" class="flex-1 py-2.5 rounded-2xl border-2 border-gray-200 text-soft-brown font-medium text-sm hover:bg-gray-50 transition-colors cursor-pointer">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="btn-review-press flex-1 py-2.5 rounded-2xl bg-gradient-to-r from-sweet-pink to-deep-pink text-white font-cute font-bold text-base shadow-cute cursor-pointer">
+                        ส่งรีวิวเลย ✨
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 2: ระบบจัดการหลังบ้านจำลอง (Demo Admin Panel)
+         แก้ไขรูปโลโก้ ชื่อร้าน รายละเอียด ลิงก์ Facebook/IG และลบรีวิวได้
+         ========================================================= -->
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-cocoa/50 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-lg max-h-[90vh] flex flex-col rounded-[32px] border-4 border-sweet-pink shadow-2xl overflow-hidden">
+            
+            <!-- ส่วนหัวหลังบ้าน -->
+            <div class="bg-soft-peach px-6 py-4 border-b border-pastel-pink flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-deep-pink text-white flex items-center justify-center">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-cute text-lg font-bold text-cocoa">ระบบจัดการหลังบ้าน (Demo)</h2>
+                        <p class="text-[11px] text-soft-brown">ปรับแต่งข้อมูลร้านและจัดการรีวิวได้ทันที</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-white text-deep-pink hover:bg-deep-pink hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- แท็บสลับเมนูหลังบ้าน -->
+            <div class="flex border-b border-pastel-pink bg-cream px-6 pt-2 gap-2">
+                <button id="tab-btn-info" onclick="switchAdminTab('info')" class="px-4 py-2 text-sm font-cute font-bold border-b-2 border-deep-pink text-deep-pink cursor-pointer">
+                    <i class="fa-solid fa-store mr-1"></i>ข้อมูลร้าน & รูปภาพ
+                </button>
+                <button id="tab-btn-reviews" onclick="switchAdminTab('reviews')" class="px-4 py-2 text-sm font-cute font-bold border-b-2 border-transparent text-soft-brown hover:text-cocoa cursor-pointer">
+                    <i class="fa-solid fa-comments mr-1"></i>จัดการรีวิว (<span id="admin-review-badge">6</span>)
+                </button>
+            </div>
+
+            <!-- เนื้อหาหลังบ้าน (เลื่อนขึ้นลงได้) -->
+            <div class="p-6 overflow-y-auto flex-1 space-y-4">
+                
+                <!-- แท็บ 1: แก้ไขข้อมูลร้าน รูปภาพ และลิงก์ติดต่อ -->
+                <form id="admin-info-form" onsubmit="handleAdminSave(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-cocoa mb-1">ลิงก์รูปภาพโลโก้ (Image URL)</label>
+                        <input type="url" id="admin-logo-url" required
+                               class="w-full px-3.5 py-2 rounded-xl bg-cream border border-pastel-pink focus:border-sweet-pink focus:outline-none text-xs">
+                        <p class="text-[11px] text-soft-brown mt-1">* สามารถวางลิงก์รูปภาพใหม่เพื่อเปลี่ยนรูปโลโก้ได้ทันที</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-cocoa mb-1">ชื่อร้าน</label>
+                        <input type="text" id="admin-shop-name" required
+                               class="w-full px-3.5 py-2 rounded-xl bg-cream border border-pastel-pink focus:border-sweet-pink focus:outline-none text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-cocoa mb-1">รายละเอียดร้าน</label>
+                        <textarea id="admin-shop-desc" rows="2" required
+                                  class="w-full px-3.5 py-2 rounded-xl bg-cream border border-pastel-pink focus:border-sweet-pink focus:outline-none text-sm resize-none"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div class="bg-blue-50/50 p-3 rounded-2xl border border-blue-100 space-y-2">
+                            <span class="text-xs font-bold text-[#1877F2] flex items-center gap-1">
+                                <i class="fa-brands fa-facebook"></i> ตั้งค่า Facebook
+                            </span>
+                            <input type="text" id="admin-fb-name" placeholder="ชื่อเพจที่แสดง"
+                                   class="w-full px-3 py-1.5 rounded-lg bg-white border border-blue-200 text-xs focus:outline-none">
+                            <input type="url" id="admin-fb-url" placeholder="https://facebook.com/..."
+                                   class="w-full px-3 py-1.5 rounded-lg bg-white border border-blue-200 text-xs focus:outline-none">
+                        </div>
+
+                        <div class="bg-pink-50/50 p-3 rounded-2xl border border-pink-100 space-y-2">
+                            <span class="text-xs font-bold text-[#E1306C] flex items-center gap-1">
+                                <i class="fa-brands fa-instagram"></i> ตั้งค่า Instagram
+                            </span>
+                            <input type="text" id="admin-ig-name" placeholder="ชื่อไอจีที่แสดง"
+                                   class="w-full px-3 py-1.5 rounded-lg bg-white border border-pink-200 text-xs focus:outline-none">
+                            <input type="url" id="admin-ig-url" placeholder="https://instagram.com/..."
+                                   class="w-full px-3 py-1.5 rounded-lg bg-white border border-pink-200 text-xs focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="pt-3 flex items-center justify-between gap-2 border-t border-pastel-pink">
+                        <button type="button" onclick="resetDemoData()" class="text-xs text-soft-brown hover:text-deep-pink underline cursor-pointer">
+                            คืนค่าเริ่มต้น (Reset)
+                        </button>
+                        <button type="submit" class="bg-deep-pink hover:bg-sweet-pink text-white font-cute font-bold px-6 py-2.5 rounded-full text-sm shadow-cute transition-colors cursor-pointer">
+                            บันทึกการเปลี่ยนแปลง
+                        </button>
+                    </div>
+                </form>
+
+                <!-- แท็บ 2: จัดการลบรีวิว -->
+                <div id="admin-reviews-panel" class="hidden space-y-3">
+                    <p class="text-xs text-soft-brown">คุณสามารถลบข้อความรีวิวที่ไม่เหมาะสมออกจากหน้าเว็บได้</p>
+                    <div id="admin-reviews-list" class="space-y-2.5">
+                        <!-- รายการรีวิวสำหรับแอดมิน -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript ควบคุมการทำงานทั้งหมด -->
+    <script>
+        // ข้อมูลเริ่มต้นของเว็บไซต์ (อ้างอิงจากข้อมูลที่ผู้ใช้ระบุ)
+        const DEFAULT_DATA = {
+            shopName: "Aey",
+            shopDesc: "ยินดีต้อนรับสู่พื้นที่รีวิวความน่ารักและประสบการณ์สุดประทับใจ ใครเคยแวะมาอุดหนุนหรือใช้บริการ อย่าลืมเขียนรีวิวเป็นกำลังใจให้กันน้า~ ✨🍓",
+            logoUrl: "https://i.postimg.cc/wMLyB7zq/mi-m-ch-x-39-20261126184835.png",
+            fbName: "Aey Official",
+            fbUrl: "https://facebook.com",
+            igName: "@aey.review",
+            igUrl: "https://instagram.com",
+            // ตัวอย่างรีวิว 6 รายการ เพื่อให้แสดงผลกล่องคำพูดสลับซ้าย-ขวา 3 คู่เหมือนในภาพร่างทันที
+            reviews: [
+                {
+                    id: 1,
+                    name: "น้องแพรว",
+                    rating: 5,
+                    text: "ร้านน่ารักมากๆ เลยค่ะ แม่ค้าใจดี ตอบแชทไวสุดๆ ประทับใจตั้งแต่ครั้งแรกที่มาใช้บริการเลย 💕",
+                    date: "เมื่อ 2 ชั่วโมงที่แล้ว"
+                },
+                {
+                    id: 2,
+                    name: "คุณมินนี่",
+                    rating: 5,
+                    text: "ตรงปกไม่จกตา แพ็คของมาน่ารักมาก มีของแถมเล็กๆ น้อยๆ ให้ด้วย ไว้กลับมาอุดหนุนอีกแน่นอนค่า 🎀",
+                    date: "เมื่อวานนี้"
+                },
+                {
+                    id: 3,
+                    name: "ใบเฟิร์น",
+                    rating: 5,
+                    text: "แวะมารีวิวให้ร้าน Aey ค่า บริการดีมาก ใส่ใจรายละเอียดทุกขั้นตอน แนะนำเลยไม่ผิดหวังแน่นอน ✨",
+                    date: "2 วันที่แล้ว"
+                },
+                {
+                    id: 4,
+                    name: "คุณต้นข้าว",
+                    rating: 5,
+                    text: "ชอบบรรยากาศและสไตล์ของร้านมาก น่ารักอบอุ่นสุดๆ เพื่อนๆ ถามกันใหญ่เลยว่าสั่งจากร้านไหน 🍓",
+                    date: "3 วันที่แล้ว"
+                },
+                {
+                    id: 5,
+                    name: "น้องมายด์",
+                    rating: 5,
+                    text: "คุณภาพเกินราคามากๆ ค่ะ ให้ 5 ดาวเต็มแบบไม่หักเลย ไว้จะชวนเพื่อนมาอุดหนุนเพิ่มนะคะ 🥰",
+                    date: "5 วันที่แล้ว"
+                },
+                {
+                    id: 6,
+                    name: "คุณน้ำหวาน",
+                    rating: 5,
+                    text: "ติดตามมาจาก IG ค่ะ ของจริงน่ารักกว่าในรูปอีก ขอบคุณที่ทำผลงานน่ารักๆ แบบนี้ออกมานะคะ 🌸",
+                    date: "1 สัปดาห์ที่แล้ว"
+                }
+            ]
+        };
+
+        // โหลดข้อมูลจาก LocalStorage (จำลองฐานข้อมูลในเบราว์เซอร์)
+        let appState = JSON.parse(localStorage.getItem('aey_review_demo_data')) || JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+        // บันทึกลง LocalStorage
+        function saveState() {
+            localStorage.setItem('aey_review_demo_data', JSON.stringify(appState));
+        }
+
+        // แสดงแจ้งเตือน Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = message;
+            toast.classList.remove('translate-y-6', 'scale-95', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-6', 'scale-95', 'opacity-0');
+            }, 3000);
+        }
+
+        // สร้าง HTML สำหรับดาว
+        function renderStars(count) {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= count) {
+                    starsHtml += '<i class="fa-solid fa-star text-butter-yellow"></i>';
+                } else {
+                    starsHtml += '<i class="fa-regular fa-star text-gray-300"></i>';
+                }
+            }
+            return starsHtml;
+        }
+
+        // อัปเดตการแสดงผลหน้าเว็บทั้งหมด
+        function renderApp() {
+            // 1. ส่วนหัว (โลโก้, ชื่อร้าน, รายละเอียด, ช่องทางติดต่อ)
+            const logoImg = document.getElementById('display-logo');
+            logoImg.src = appState.logoUrl || 'https://placehold.co/300x300/FFE5EC/FB6F92?text=Demo+Logo';
+            
+            document.getElementById('display-shop-name').textContent = appState.shopName;
+            document.getElementById('footer-shop-name').textContent = appState.shopName;
+            document.querySelectorAll('.modal-shop-title').forEach(el => el.textContent = appState.shopName);
+            document.getElementById('display-shop-desc').textContent = appState.shopDesc;
+
+            document.getElementById('display-fb-name').textContent = appState.fbName;
+            document.getElementById('link-facebook').href = appState.fbUrl || '#';
+
+            document.getElementById('display-ig-name').textContent = appState.igName;
+            document.getElementById('link-ig').href = appState.igUrl || '#';
+
+            // 2. คำนวณคะแนนเฉลี่ย และ จำนวนรีวิว
+            const totalReviews = appState.reviews.length;
+            let avgRating = 0;
+            if (totalReviews > 0) {
+                const sum = appState.reviews.reduce((acc, item) => acc + Number(item.rating), 0);
+                avgRating = (sum / totalReviews).toFixed(1);
+            }
+
+            document.getElementById('display-avg-rating').textContent = totalReviews > 0 ? avgRating : '0.0';
+            document.getElementById('display-review-count').textContent = totalReviews;
+            document.getElementById('admin-review-badge').textContent = totalReviews;
+            document.getElementById('display-stars-row').innerHTML = renderStars(Math.round(avgRating));
+
+            // 3. แสดงผลกล่องข้อความรีวิว (Speech Bubbles) สลับซ้าย-ขวาตามภาพร่าง
+            const container = document.getElementById('reviews-container');
+            container.innerHTML = '';
+
+            if (totalReviews === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 bg-white/80 rounded-3xl border-2 border-dashed border-pastel-pink">
+                        <p class="font-cute text-lg text-soft-brown">ยังไม่มีรีวิวเลย มาเป็นคนแรกที่รีวิวให้ร้าน ${appState.shopName} กันเถอะ! 💕</p>
+                    </div>
+                `;
+                return;
+            }
+
+            appState.reviews.forEach((review, index) => {
+                // ลำดับเลขคู่ (0, 2, 4...) อยู่ฝั่งซ้าย | ลำดับเลขคี่ (1, 3, 5...) อยู่ฝั่งขวา เหมือนแบบร่าง
+                const isLeft = index % 2 === 0;
+                const alignClass = isLeft ? 'self-start' : 'self-end';
+                const bubbleClass = isLeft ? 'bubble-left' : 'bubble-right';
+                const avatarBg = isLeft ? 'bg-pastel-pink text-deep-pink' : 'bg-butter-yellow/40 text-cocoa';
+
+                const card = document.createElement('div');
+                card.className = `w-full sm:w-[82%] md:w-[76%] ${alignClass} ${bubbleClass} px-6 py-5 sm:px-7 sm:py-6 shadow-bubble transition-transform duration-200 hover:-translate-y-0.5`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-2.5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full ${avatarBg} flex items-center justify-center font-cute font-bold text-sm shadow-xs ring-2 ring-white">
+                                ${escapeHTML(review.name.charAt(0))}
+                            </div>
+                            <div>
+                                <h3 class="font-cute font-bold text-sm sm:text-base text-cocoa leading-tight">${escapeHTML(review.name)}</h3>
+                                <span class="text-[11px] text-soft-brown">${escapeHTML(review.date)}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-0.5 text-xs bg-white/90 px-3 py-1 rounded-full border border-pastel-pink shadow-2xs">
+                            ${renderStars(review.rating)}
+                        </div>
+                    </div>
+                    <p class="text-cocoa/90 text-sm sm:text-base leading-relaxed pl-1">
+                        "${escapeHTML(review.text)}"
+                    </p>
+                `;
+                container.appendChild(card);
+            });
+
+            renderAdminReviewsList();
+        }
+
+        // ป้องกัน XSS เมื่อแสดงข้อความที่ผู้ใช้กรอก
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ==========================================
+        // ระบบ Modal เขียนรีวิว (ฝั่งลูกค้า)
+        // ==========================================
+        function openReviewModal() {
+            const modal = document.getElementById('review-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setStarRating(5);
+        }
+
+        function closeReviewModal() {
+            const modal = document.getElementById('review-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('review-form').reset();
+        }
+
+        // ระบบคลิกเลือกดาว
+        const stars = document.querySelectorAll('#star-selector i');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const val = parseInt(star.getAttribute('data-value'));
+                setStarRating(val);
+            });
+        });
+
+        function setStarRating(val) {
+            document.getElementById('review-rating').value = val;
+            stars.forEach(s => {
+                const sVal = parseInt(s.getAttribute('data-value'));
+                if (sVal <= val) {
+                    s.classList.remove('text-gray-300');
+                    s.classList.add('text-butter-yellow');
+                } else {
+                    s.classList.remove('text-butter-yellow');
+                    s.classList.add('text-gray-300');
+                }
+            });
+        }
+
+        function handleReviewSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('reviewer-name').value.trim();
+            const text = document.getElementById('review-text').value.trim();
+            const rating = parseInt(document.getElementById('review-rating').value);
+
+            if (!name || !text) return;
+
+            const newReview = {
+                id: Date.now(),
+                name: name,
+                rating: rating,
+                text: text,
+                date: "เมื่อสักครู่นี้"
+            };
+
+            // เพิ่มรีวิวใหม่ไว้ด้านบนสุด
+            appState.reviews.unshift(newReview);
+            saveState();
+            renderApp();
+            closeReviewModal();
+            showToast("ขอบคุณสำหรับรีวิวน่ารักๆ นะคะ! 💖");
+        }
+
+        // ==========================================
+        // ระบบหลังบ้านจำลอง (Admin Modal)
+        // ==========================================
+        function openAdminModal() {
+            // เติมข้อมูลปัจจุบันลงในฟอร์ม
+            document.getElementById('admin-logo-url').value = appState.logoUrl;
+            document.getElementById('admin-shop-name').value = appState.shopName;
+            document.getElementById('admin-shop-desc').value = appState.shopDesc;
+            document.getElementById('admin-fb-name').value = appState.fbName;
+            document.getElementById('admin-fb-url').value = appState.fbUrl;
+            document.getElementById('admin-ig-name').value = appState.igName;
+            document.getElementById('admin-ig-url').value = appState.igUrl;
+
+            const modal = document.getElementById('admin-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function switchAdminTab(tab) {
+            const infoForm = document.getElementById('admin-info-form');
+            const reviewsPanel = document.getElementById('admin-reviews-panel');
+            const btnInfo = document.getElementById('tab-btn-info');
+            const btnReviews = document.getElementById('tab-btn-reviews');
+
+            if (tab === 'info') {
+                infoForm.classList.remove('hidden');
+                reviewsPanel.classList.add('hidden');
+                btnInfo.classList.add('border-deep-pink', 'text-deep-pink');
+                btnInfo.classList.remove('border-transparent', 'text-soft-brown');
+                btnReviews.classList.remove('border-deep-pink', 'text-deep-pink');
+                btnReviews.classList.add('border-transparent', 'text-soft-brown');
+            } else {
+                infoForm.classList.add('hidden');
+                reviewsPanel.classList.remove('hidden');
+                btnReviews.classList.add('border-deep-pink', 'text-deep-pink');
+                btnReviews.classList.remove('border-transparent', 'text-soft-brown');
+                btnInfo.classList.remove('border-deep-pink', 'text-deep-pink');
+                btnInfo.classList.add('border-transparent', 'text-soft-brown');
+            }
+        }
+
+        function handleAdminSave(e) {
+            e.preventDefault();
+            appState.logoUrl = document.getElementById('admin-logo-url').value.trim();
+            appState.shopName = document.getElementById('admin-shop-name').value.trim();
+            appState.shopDesc = document.getElementById('admin-shop-desc').value.trim();
+            appState.fbName = document.getElementById('admin-fb-name').value.trim();
+            appState.fbUrl = document.getElementById('admin-fb-url').value.trim();
+            appState.igName = document.getElementById('admin-ig-name').value.trim();
+            appState.igUrl = document.getElementById('admin-ig-url').value.trim();
+
+            saveState();
+            renderApp();
+            closeAdminModal();
+            showToast("อัปเดตข้อมูลหน้าร้านเรียบร้อยแล้ว! ✨");
+        }
+
+        function renderAdminReviewsList() {
+            const list = document.getElementById('admin-reviews-list');
+            list.innerHTML = '';
+
+            if (appState.reviews.length === 0) {
+                list.innerHTML = '<p class="text-center text-xs text-soft-brown py-4">ไม่มีรายการรีวิวในระบบ</p>';
+                return;
+            }
+
+            appState.reviews.forEach(rev => {
+                const item = document.createElement('div');
+                item.className = 'flex items-start justify-between gap-3 p-3 rounded-2xl bg-cream border border-pastel-pink';
+                item.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="font-cute font-bold text-xs text-cocoa">${escapeHTML(rev.name)}</span>
+                            <span class="text-[10px] text-amber-500">★ ${rev.rating}</span>
+                        </div>
+                        <p class="text-xs text-soft-brown truncate mt-0.5">${escapeHTML(rev.text)}</p>
+                    </div>
+                    <button onclick="deleteReview(${rev.id})" title="ลบรีวิวนี้" 
+                            class="w-7 h-7 rounded-lg bg-red-50 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function deleteReview(id) {
+            appState.reviews = appState.reviews.filter(r => r.id !== id);
+            saveState();
+            renderApp();
+            showToast("ลบรีวิวเรียบร้อยแล้ว");
+        }
+
+        function resetDemoData() {
+            appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+            saveState();
+            renderApp();
+            openAdminModal();
+            showToast("คืนค่าข้อมูลเริ่มต้นเรียบร้อยแล้ว");
+        }
+
+        // ==========================================
+        // ระบบจัดการหน้าโหลดต้อนรับ (Splash Screen Boot Sequence)
+        // อ้างอิงขั้นตอนการเตรียมข้อมูลจริง ไม่หน่วงเวลาเกินจำเป็น
+        // ==========================================
+        function updateSplashProgress(percent, statusText) {
+            const bar = document.getElementById('splash-progress-bar');
+            const textEl = document.getElementById('splash-status-text');
+            if (bar) {
+                bar.style.width = `${percent}%`;
+                bar.setAttribute('aria-valuenow', percent);
+            }
+            if (textEl && statusText) {
+                textEl.textContent = statusText;
+            }
+        }
+
+        function unlockAndHideSplash() {
+            const splash = document.getElementById('splash-screen');
+            const body = document.getElementById('app-body');
+            if (body) {
+                body.classList.remove('overflow-hidden');
+            }
+            if (splash) {
+                splash.classList.add('splash-hidden');
+                // ลบออกจากลำดับการโฟกัสหลัง Fade Out จบ เพื่อไม่ให้รบกวนการกดปุ่มหรือหน้าต่างหลังบ้าน
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 600);
+            }
+        }
+
+        function preloadPrimaryLogo(url) {
+            return new Promise((resolve) => {
+                if (!url) {
+                    resolve();
+                    return;
+                }
+                const img = new Image();
+                // ตั้งเวลาสูงสุด 3 วินาทีสำหรับรูปโลโก้ หากเน็ตช้ามากให้เข้าเว็บก่อนแล้วโหลดรูปต่อทีหลัง
+                const timeout = setTimeout(() => resolve(), 3000);
+                img.onload = () => {
+                    clearTimeout(timeout);
+                    resolve();
+                };
+                img.onerror = () => {
+                    clearTimeout(timeout);
+                    resolve(); // มี onerror fallback ที่ <img> หลักอยู่แล้ว จึงไม่ทำให้เว็บค้าง
+                };
+                img.src = url;
+            });
+        }
+
+        async function bootApplication() {
+            const errorBox = document.getElementById('splash-error-box');
+            const progressWrapper = document.getElementById('splash-progress-wrapper');
+            const slowHint = document.getElementById('splash-slow-hint');
+
+            // รีเซ็ตสถานะเริ่มต้น
+            errorBox.classList.add('hidden');
+            progressWrapper.classList.remove('hidden');
+            slowHint.classList.add('hidden');
+
+            // ตัวจับเวลาแจ้งเตือนหากอินเทอร์เน็ตช้าเกิน 2.5 วินาที
+            const slowNetworkTimer = setTimeout(() => {
+                slowHint.classList.remove('hidden');
+            }, 2500);
+
+            try {
+                // ขั้นตอนที่ 1 (25%): ตรวจสอบโครงสร้าง DOM และข้อมูลในเครื่อง
+                updateSplashProgress(25, "ยินดีต้อนรับน้า ♡");
+                const savedRaw = localStorage.getItem('aey_review_demo_data');
+                if (savedRaw) {
+                    const parsed = JSON.parse(savedRaw);
+                    if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.reviews)) {
+                        throw new Error("ข้อมูลที่บันทึกไว้ไม่สมบูรณ์");
+                    }
+                    appState = parsed;
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // ขั้นตอนที่ 2 (60%): เตรียมรูปภาพโลโก้หลักและเรนเดอร์ข้อมูลหน้าร้าน
+                updateSplashProgress(60, "กำลังเตรียมร้านให้นะคะ");
+                await preloadPrimaryLogo(appState.logoUrl);
+                renderApp();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // ขั้นตอนที่ 3 (100%): ตรวจสอบความพร้อมของเนื้อหาหลักก่อนเปิดหน้าเว็บ
+                updateSplashProgress(100, "ใกล้พร้อมแล้วค่ะ ✨");
+                clearTimeout(slowNetworkTimer);
+                slowHint.classList.add('hidden');
+
+                // รอให้แถบความคืบหน้าวิ่งถึง 100% แล้ว Fade Out เข้าสู่หน้าเว็บหลัก
+                setTimeout(() => {
+                    unlockAndHideSplash();
+                }, 350);
+
+            } catch (err) {
+                clearTimeout(slowNetworkTimer);
+                slowHint.classList.add('hidden');
+                progressWrapper.classList.add('hidden');
+                document.getElementById('splash-status-text').textContent = "เกิดข้อผิดพลาดเล็กน้อยค่ะ 🥺";
+                document.getElementById('splash-error-msg').textContent = `ไม่สามารถโหลดข้อมูลร้านได้ (${err.message || 'ข้อมูลขัดข้อง'})`;
+                errorBox.classList.remove('hidden');
+            }
+        }
+
+        function retryBootApp() {
+            // หากข้อมูลใน localStorage เสียหาย ให้กู้คืนค่าเริ่มต้นแล้วเริ่มโหลดใหม่
+            try {
+                const raw = localStorage.getItem('aey_review_demo_data');
+                if (raw) JSON.parse(raw);
+            } catch (_) {
+                appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                saveState();
+            }
+            bootApplication();
+        }
+
+        // เริ่มทำงานเฉพาะตอนเปิดหน้าเว็บใหม่ (ไม่ทำงานซ้ำเมื่อสลับแท็บหรือเปิดป๊อปอัพ)
+        window.addEventListener('DOMContentLoaded', bootApplication);
+    </script>
+</body>
+</html>
